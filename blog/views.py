@@ -11,7 +11,8 @@ from django.views.generic import (
     DeleteView
 )
 from django.contrib.auth.models import User
-from .models import Post
+from .models import Post, Comment
+from .forms import CommentForm
 
 def home(req):
     context = {
@@ -38,6 +39,40 @@ class UserPostListView(ListView):
 
 class PostDetailView(DetailView):
     model = Post
+
+    def get_context_data(self, **kwargs):
+        data = super().get_context_data(**kwargs)
+
+        comments_connected = Comment.objects.order_by('-created_on')
+        data['comments'] = comments_connected
+        if self.request.user.is_authenticated:
+            data['comment_form'] = CommentForm(instance=self.request.user)
+
+        return data
+
+# def post_detail(request, slug):
+#     template_name = 'post_detail.html'
+#     post = get_object_or_404(Post, slug=slug)
+#     comments = post.comments.filter(active=True)
+#     new_comment = None
+#     # Comment posted
+#     if request.method == 'POST':
+#         comment_form = CommentForm(data=request.POST)
+#         if comment_form.is_valid():
+#             # Create Comment object but don't save to database yet
+#             new_comment = comment_form.save(commit=False)
+#             # Assign the current post to the comment
+#             new_comment.post = post
+#             # Save the comment to the database
+#             new_comment.save()
+#     else:
+#         comment_form = CommentForm()
+
+#     return render(request, template_name, {'post': post,
+#                                            'comments': comments,
+#                                            'new_comment': new_comment,
+#                                            'comment_form': comment_form})
+
 
 class PostCreateView(LoginRequiredMixin, CreateView):
     model = Post
