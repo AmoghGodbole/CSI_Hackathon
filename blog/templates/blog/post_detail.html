@@ -6,7 +6,7 @@
     <img class="rounded-circle article-img" src="{{ object.author.profile.image.url }}">
     <div class="media-body">
         <div class="article-metadata">
-            <a class="mr-2" href="{% url 'user-posts' object.author.username %}">{{ object.author }}</a>
+            <a class="mr-2" href="{% url 'user-posts' object.author.username %}" style="color: #58ae9b;">{{ object.author }}</a>
             <small class="text-muted">{{ object.date_posted|date:"F j, Y" }}</small>
             {% if object.author == user %}
                 <div>
@@ -15,10 +15,22 @@
                 </div>
             {% endif %}
         </div>
-        <h2 class="article-title">{{ object.title }}</h2>
+        <h2 class="article-title" style="color: #58ae9b;">{{ object.title }}</h2>
         <p class="article-content">{{ object.content }}</p>
     </div>
     </article>
+    
+    <p>Uploaded files:</p>
+      <ul>
+        {% for obj in documents %}
+          <li>
+            <a href="{{ obj.document.url }}">{{ obj.document.name }}</a>
+            <small>(Uploaded at: {{ obj.uploaded_at }})</small>
+          </li>
+        {% endfor %}
+      </ul>
+   
+  
     <div class="col-md-8 card mb-4  mt-3 ">
       <div class="card-body">
         <!-- comments -->
